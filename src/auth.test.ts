@@ -1,0 +1,39 @@
+import { describe, it, expect, beforeAll } from "vitest";
+import { validateJWT, makeJWT, hashPassword, checkPasswordHash } from "./auth.js"
+
+
+describe("Password Hashing", () => {
+  const password1 = "correctPassword123!";
+  const password2 = "anotherPassword456!";
+  let hash1: string;
+  let hash2: string;
+
+  beforeAll(async () => {
+    hash1 = await hashPassword(password1);
+    hash2 = await hashPassword(password2);
+  });
+
+  it("should return true for the correct password", async () => {
+    const result = await checkPasswordHash(password1, hash1);
+    expect(result).toBe(true);
+  });
+});
+
+
+describe("Make JWT", () => {
+  const userID = "4cc7f31b-4db7-4889-a679-8eb88c1fee8b";
+  const expiresIn = 10000;
+  const secret = "secret"
+  let hash1: string;
+  let hash2: string;
+
+  beforeAll(async () => {
+    hash1 = await hashPassword(jwt1);
+    hash2 = await hashPassword(jwt2);
+  });
+
+  it("should return true for the correct password", async () => {
+    const result = await makeJWT(userID, expiresIn);
+    expect(result).toBe(true);
+  });
+});
