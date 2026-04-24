@@ -29,8 +29,6 @@ function validateChirp(text: string) {
 }
 
 export async function handlerChirp(req: Request, res: Response) {
-    console.log("\n------------------------")
-    console.log("Handler Chirp")
 
     type parameters = {
         body: string;
@@ -39,25 +37,13 @@ export async function handlerChirp(req: Request, res: Response) {
 
     const tokenString = getBearerToken(req);
     const secret = config.jwt.secret
-    console.log("tokenString")
-    console.log(tokenString)
-    console.log("\nsecret")
-    console.log(secret)
-
     const userID = validateJWT(tokenString, secret);
-    
-    console.log("\nUser ID")
-    console.log(userID)
-
     const cleanedBody = validateChirp(req.body.body);
 
     const params: parameters = {
         body: cleanedBody,
         userId: userID
     };
-
-    console.log("\nparams")
-    console.log(params)
 
     if (!params.body || !params.userId) {
         throw new BadRequestError("Missing required fields");
@@ -67,7 +53,6 @@ export async function handlerChirp(req: Request, res: Response) {
         body: params.body,
         userId: params.userId
     });
-    console.log("chirp", chirp)
 
     if (!chirp) {
         throw new Error("Could not create chirp");
@@ -92,7 +77,6 @@ export async function handlerRetrieveAllChirps(req: Request, res: Response) {
 }
 
 export async function handlerRetrieveChirp(req: Request, res: Response) {
-    console.log("HANDLER RETREIVE CHIRP")
     const chirpID = req.params.chirpId;
     let chirpUUID = chirpID
 
@@ -104,14 +88,9 @@ export async function handlerRetrieveChirp(req: Request, res: Response) {
 
     const chirp = await retrieveChirp(chirpUUID);
 
-
-    
-    
-
     if (!chirp) {
         throw new NotFoundError(`Chirp ID: ${chirpUUID} not found`)
     }
-    console.log("CHIRP")
-    console.log(chirp)
+
     respondWithJSON(res, 200, chirp)
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { hashPassword, checkPasswordHash, getBearerToken, makeJWT } from "../auth.js";
+import { hashPassword, checkPasswordHash, getBearerToken, makeJWT, makeRefreshToken } from "../auth.js";
 import { UnauthorizedError } from "./errors.js";
 import { respondWithError, respondWithJSON } from "./json.js";
 import { fetchUser } from "../db/queries/users.js";
@@ -7,10 +7,6 @@ import { config } from "../config.js"
 
 
 export async function handlerLogin(req: Request, res: Response) {
-    console.log("HANDLER LOGIN")
-    console.log(req.body.email)
-    console.log(req.body.password)
-
     const email = req.body.email
     const password = req.body.password;
     const expiresIn = req.body.expiresIn
@@ -26,7 +22,6 @@ export async function handlerLogin(req: Request, res: Response) {
     const user = await fetchUser(email);
 
     if (!user) {
-        console.log("\nNOT USER")
         respondWithError(res, 401, "incorrect email or password");
         return
     }
@@ -41,13 +36,20 @@ export async function handlerLogin(req: Request, res: Response) {
     }
 
     const token = makeJWT(user.id, expirationTime, config.jwt.secret)
+    const refreshToken = makeRefreshToken();
 
     respondWithJSON(res, 200, {
         id: user.id,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         email: user.email,
-        token: token
+        token: token,
+        refreshToken: refreshToken,
     });
+
+    return {
+        token: token,
+        refreshToken: refreshToken
+    }
 }
 
