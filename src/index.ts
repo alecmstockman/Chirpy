@@ -11,7 +11,7 @@ import { middlewareLogResponses, middlewareMetricsInc, errorMiddleware } from ".
 import "./config.js"
 import { config } from "./config.js"
 import { handlerLogin } from "./api/login.js";
-import { handlerRefresh } from "./api/refresh.js";
+import { handlerRefresh, handlerRevoke } from "./api/refresh.js";
 
 
 const migrationClient = postgres(config.db.url, { max: 1 });
