@@ -5,10 +5,6 @@ import { eq, asc } from "drizzle-orm";
 
 
 export async function createUser(user: NewUser) {
-    console.log("\n------------------------------");
-    console.log("CREATE USER")
-    console.log(user);
-
     const [result] = await db
         .insert(users)
         .values({email: user.email, hashedPassword: user.hashedPassword})
@@ -20,9 +16,6 @@ export async function createUser(user: NewUser) {
 
 
 export async function fetchUser(email: string) {
-    console.log("\n------------------------------")
-    console.log("fetchUser");
-
     const [result] = await db
         .select()
         .from(users)
@@ -33,8 +26,6 @@ export async function fetchUser(email: string) {
 
 
 export async function resetUsers() {
-    console.log("\n---------------------------------------")
-    console.log("reset users")
     try {
         await db.delete(users);
     } catch (err) {
@@ -43,6 +34,5 @@ export async function resetUsers() {
             console.error("cause:", (err as any).cause);
         }
     }
-    
     console.log("delete successful")
 }
