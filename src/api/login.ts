@@ -1,42 +1,31 @@
 import { Request, Response } from "express";
-import { hashPassword, checkPasswordHash, getBearerToken, makeJWT, makeRefreshToken } from "../auth.js";
-import { UnauthorizedError } from "./errors.js";
+import { checkPasswordHash, makeJWT } from "../auth.js";
 import { respondWithError, respondWithJSON } from "./json.js";
 import { fetchUser } from "../db/queries/users.js";
 import { config } from "../config.js"
+import { refreshTokenCreate } from "../db/queries/refresh.js";
+import { UnauthorizedError } from "./errors.js";
 
 
 export async function handlerLogin(req: Request, res: Response) {
     const email = req.body.email
     const password = req.body.password;
-    const expiresIn = req.body.expiresIn
-
-    let expirationTime = 3600000
-
-    if (expiresIn === undefined || expiresIn > 3600000 || expiresIn <= 0) {
-        expirationTime = 3600000
-    } else if (expiresIn > 0 && expiresIn < 3600000) {
-        expirationTime = expiresIn
-    }
+    const expiresIn = 60 * 60
 
     const user = await fetchUser(email);
 
     if (!user) {
-        respondWithError(res, 401, "incorrect email or password");
-        return
+        throw new UnauthorizedError("incorrect email or password");
     }
 
     const verified = await checkPasswordHash(password, user.hashedPassword);
 
-    console.log("VERIFICATION: ", verified);
-
     if (verified === false) {
-        respondWithError(res, 401, "incorrect email or password");
-        return
+        throw new UnauthorizedError("incorrect email or password");
     }
 
-    const token = makeJWT(user.id, expirationTime, config.jwt.secret)
-    const refreshToken = makeRefreshToken();
+    const token = makeJWT(user.id, expiresIn, config.jwt.secret)
+    const refreshToken = await refreshTokenCreate(user.id);
 
     respondWithJSON(res, 200, {
         id: user.id,
@@ -46,10 +35,5 @@ export async function handlerLogin(req: Request, res: Response) {
         token: token,
         refreshToken: refreshToken,
     });
-
-    return {
-        token: token,
-        refreshToken: refreshToken
-    }
 }
 

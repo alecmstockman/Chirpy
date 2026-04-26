@@ -36,7 +36,7 @@ export async function handlerChirp(req: Request, res: Response) {
     };
 
     const tokenString = getBearerToken(req);
-    const secret = config.jwt.secret
+    const secret = config.jwt.secret;
     const userID = validateJWT(tokenString, secret);
     const cleanedBody = validateChirp(req.body.body);
 
@@ -67,12 +67,8 @@ export async function handlerChirp(req: Request, res: Response) {
     });
 }
 
-
 export async function handlerRetrieveAllChirps(req: Request, res: Response) {
-    console.log("RETRIEVE ALL CHIRPS")
     const chirps = await retrieveAllChirps();
-    console.log(chirps)
-
     respondWithJSON(res, 200, chirps);
 }
 

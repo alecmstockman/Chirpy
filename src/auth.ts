@@ -1,10 +1,9 @@
 import * as argon2 from "argon2";
-import { Request, Response } from "express";
+import { Request } from "express";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken"
 import { UnauthorizedError } from "./api/errors.js";
 import crypto from "crypto";
-
 
 
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
@@ -71,6 +70,7 @@ export function getBearerToken(req: Request): string {
     const auth = req.get("authorization");
 
     if (!auth) {
+        console.log("get bearer token error 1")
         throw new UnauthorizedError("invalid auth")
     }
 
@@ -81,7 +81,7 @@ export function getBearerToken(req: Request): string {
 
 export function makeRefreshToken() {
     const randomrData = crypto.randomBytes(32);
-    const hexData = randomrData.toString("hex");
+    const token = randomrData.toString("hex");
 
-    
+    return token;
 }
