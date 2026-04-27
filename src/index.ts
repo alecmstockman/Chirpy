@@ -6,7 +6,7 @@ import { handlerReadiness } from "./api/readiness.js"
 import { handlerMetrics } from "./api/metrics.js";
 import {  handlerReset } from "./api/reset.js";
 import { handlerChirp, handlerRetrieveAllChirps, handlerRetrieveChirp } from "./api/chirp.js"
-import { handlerUsersCreate } from "./api/users.js";
+import { handlerUsersCreate, handlerUsersUpdate } from "./api/users.js";
 import { middlewareLogResponses, middlewareMetricsInc, errorMiddleware } from "./api/middleware.js";
 import "./config.js"
 import { config } from "./config.js"
@@ -36,6 +36,9 @@ app.post("/admin/reset", (req, res, next) => {
 app.post("/api/users", (req, res, next) => {
     Promise.resolve(handlerUsersCreate(req, res)).catch(next);
 });
+app.put("/api/users", (req, res, next) => {
+    Promise.resolve(handlerUsersUpdate(req, res)).catch(next);
+})
 app.post("/api/chirps", (req, res, next) => {
     Promise.resolve(handlerChirp(req, res)).catch(next);
 });

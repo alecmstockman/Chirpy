@@ -14,6 +14,21 @@ export async function createUser(user: NewUser) {
     return result;
 }
 
+export async function updateUser(userId: string, email: string, hashedPassword: string ) {    
+    const currentDate = new Date();
+
+    const [result] = await db
+        .update(users)
+        .set({
+            email: email,
+            hashedPassword: hashedPassword,
+            updatedAt: currentDate,
+        })
+        .where(eq(users.id, userId))
+        .returning()
+
+    return result;
+}
 
 export async function fetchUser(email: string) {
     const [result] = await db
@@ -23,7 +38,6 @@ export async function fetchUser(email: string) {
     return result;
     
 }
-
 
 export async function resetUsers() {
     try {

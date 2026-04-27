@@ -3,6 +3,7 @@ import { NotFoundError, UnauthorizedError } from "./errors.js";
 import { getUserFromRefreshToken, refreshTokenRevoke } from "../db/queries/refresh.js";
 import { respondWithJSON } from "./json.js";
 import { getBearerToken, makeJWT } from "../auth.js";
+import { config } from "../config.js"
 
 
 export async function handlerRefresh(req: Request, res: Response) {
@@ -13,16 +14,7 @@ export async function handlerRefresh(req: Request, res: Response) {
         throw new UnauthorizedError("invalid auth");
     }
 
-    const issuedAt = Date.now();
-    const expiresIn = 60 * 60;
-    const expiresAt = issuedAt + expiresIn;
-    const secret = process.env.JWT_SECRET;
-
-    if (!secret) {
-        throw new Error("No Secret established");
-    }
-
-    const newToken = makeJWT(user.id, expiresAt, secret);
+    const newToken = makeJWT(user.id, config.jwt.defaultDuration, config.jwt.secret);
 
     if (!user) {
         throw new NotFoundError("user not found");

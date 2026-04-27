@@ -70,7 +70,6 @@ export function getBearerToken(req: Request): string {
     const auth = req.get("authorization");
 
     if (!auth) {
-        console.log("get bearer token error 1")
         throw new UnauthorizedError("invalid auth")
     }
 
@@ -82,6 +81,5 @@ export function getBearerToken(req: Request): string {
 export function makeRefreshToken() {
     const randomrData = crypto.randomBytes(32);
     const token = randomrData.toString("hex");
-
     return token;
 }

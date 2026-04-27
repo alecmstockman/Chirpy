@@ -19,6 +19,7 @@ export type DBConfig = {
 };
 
 export type JWTConfig = {
+    defaultDuration: number;
     secret: string,
 };
 
@@ -49,6 +50,7 @@ export const config: Config = {
         migrationConfig: migrationConfig,
     },
     jwt: {
+        defaultDuration: 60 * 60,
         secret: envOrThrow("JWT_SECRET"),
     }
 }
