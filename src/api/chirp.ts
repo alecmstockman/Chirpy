@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { respondWithJSON } from "./json.js";
-import { BadRequestError, NotFoundError} from "./errors.js"
-import { createChirp, retrieveAllChirps, retrieveChirp } from "../db/queries/chirp.js";
+import { BadRequestError, NotFoundError, UserForbiddenError} from "./errors.js"
+import { createChirp, retrieveAllChirps, retrieveChirp, deleteChirp } from "../db/queries/chirp.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js"
 
@@ -73,13 +73,13 @@ export async function handlerRetrieveAllChirps(req: Request, res: Response) {
 }
 
 export async function handlerRetrieveChirp(req: Request, res: Response) {
-    const chirpID = req.params.chirpId;
-    let chirpUUID = chirpID
+    const chirpId = req.params.chirpId;
+    let chirpUUID = chirpId
 
-    if (typeof chirpID !== "string") {
-        chirpUUID = chirpID[0]
+    if (typeof chirpId !== "string") {
+        chirpUUID = chirpId[0]
     } else {
-        chirpUUID = chirpID
+        chirpUUID = chirpId
     }
 
     const chirp = await retrieveChirp(chirpUUID);
@@ -89,4 +89,41 @@ export async function handlerRetrieveChirp(req: Request, res: Response) {
     }
 
     respondWithJSON(res, 200, chirp)
+}
+
+export async function handlerDeleteChirp(req: Request, res: Response) {
+    console.log("\n----------- HANDLER DELETE CHIRP -------------");
+    const tokenString = getBearerToken(req);
+    console.log("token: ", tokenString);
+    const secret = config.jwt.secret;
+    const userId = validateJWT(tokenString, secret);
+    console.log("userId", userId)
+    const chirpId = req.params.chirpId;
+    console.log("chirpId", chirpId)
+
+    let chirpUUID = chirpId
+
+    if (typeof chirpId !== "string") {
+        chirpUUID = chirpId[0];
+    } else {
+        chirpUUID = chirpId;
+    }
+
+    const chirp = await retrieveChirp(chirpUUID);
+
+    if (chirp.userId !== userId) {
+        throw new UserForbiddenError("User is not author of this chirp");
+    }
+
+    const deletedChirp = await deleteChirp(chirpUUID);
+
+    console.log('HANDLER DELETE CHIRP');
+    console.log(deletedChirp)
+
+    if (!deletedChirp) {
+        throw new NotFoundError("chirp not found");
+    }
+
+
+    res.status(204).send();
 }

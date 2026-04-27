@@ -17,6 +17,7 @@ export type User = {
     createdAt: Date,
     updatedAt: Date,
     token: string,
+    isChirpyRed: boolean,
 };
 
 export type Email = {
@@ -44,7 +45,8 @@ export async function handlerUsersCreate(req: any, res: any) {
         id: user.id,
         email: user.email,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
+        isChirpyRed: user.isChirpyRed
     });
 }
 
@@ -71,7 +73,8 @@ export async function handlerUsersUpdate(req: any, res: any) {
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        token: accessToken
+        token: accessToken,
+        isChirpyRed: user.isChirpyRed,
     }
 
     respondWithJSON(res, 200, updatedUser);

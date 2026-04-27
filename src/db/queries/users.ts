@@ -50,3 +50,18 @@ export async function resetUsers() {
     }
     console.log("delete successful")
 }
+
+export async function upgradeUser(userId: string) {
+    const currentDate = new Date();
+
+    const [result] = await db
+        .update(users)
+        .set({
+            isChirpyRed: true,
+            updatedAt: currentDate,
+        })
+        .where(eq(users.id, userId))
+        .returning()
+
+    return result;
+}

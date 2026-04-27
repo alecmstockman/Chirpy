@@ -1,0 +1,1 @@
+ALTER TABLE "chirps" ALTER COLUMN "is_chirpy_red" SET DEFAULT false;
