@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
-import { respondWithJSON } from "../json.js";
-import { BadRequestError, NotFoundError, UserForbiddenError} from "../errors.js"
-import { upgradeUser } from "../../db/queries/users.js";
+import { respondWithJSON } from "./json.js";
+import { BadRequestError, NotFoundError, UnauthorizedError, UserForbiddenError} from "./errors.js"
+import { upgradeUser } from "../db/queries/users.js";
+import { getAPIKey } from "../auth.js";
+import { config } from "../config.js";
 
 
 export async function handlerUpgradeuser(req: Request, res: Response) {
@@ -9,10 +11,18 @@ export async function handlerUpgradeuser(req: Request, res: Response) {
         event: string;
         data: {
             userId: string
-        };
+        }
     };
 
     console.log("\n---------------- HANDLER UPGRADE USER ------------------")
+
+    const apiKey = getAPIKey(req);
+    console.log("apiKey", apiKey);
+    console.log("config", config.polka.apiKey)
+    
+    if (apiKey !== config.polka.apiKey) {
+        throw new UnauthorizedError("invalid username or password");
+    }
 
     const webhook: webhooks = req.body;
     console.log("webhook", webhook)
@@ -31,7 +41,7 @@ export async function handlerUpgradeuser(req: Request, res: Response) {
     if (!upgradeUser) {
         throw new NotFoundError("user not found")
     }
-    
+
     console.log("sending 204")
     respondWithJSON(res, 204, upgradedUser);
 }

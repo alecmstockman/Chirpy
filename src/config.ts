@@ -5,6 +5,7 @@ type Config = {
     api: APIConfig;
     db: DBConfig;
     jwt: JWTConfig;
+    polka: PolkaConfig;
 };
 
 export type APIConfig = {
@@ -22,6 +23,10 @@ export type JWTConfig = {
     defaultDuration: number;
     secret: string,
 };
+
+export type PolkaConfig = {
+    apiKey: string
+}
 
 process.loadEnvFile();
 
@@ -52,6 +57,9 @@ export const config: Config = {
     jwt: {
         defaultDuration: 60 * 60,
         secret: envOrThrow("JWT_SECRET"),
+    },
+    polka: {
+        apiKey: envOrThrow("POLKA_KEY")
     }
 }
 

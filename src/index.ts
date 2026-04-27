@@ -12,7 +12,7 @@ import "./config.js"
 import { config } from "./config.js"
 import { handlerLogin } from "./api/login.js";
 import { handlerRefresh, handlerRevoke } from "./api/refresh.js";
-import { handlerUpgradeuser } from "./api/polka/webhooks.js";
+import { handlerUpgradeuser } from "./api/webhooks.js";
 
 const migrationClient = postgres(config.db.url, { max: 1 });
 await migrate(drizzle(migrationClient), config.db.migrationConfig);

@@ -83,3 +83,20 @@ export function makeRefreshToken() {
     const token = randomrData.toString("hex");
     return token;
 }
+
+export function getAPIKey(req: Request) {
+    console.log("----- GET API KEY")
+    console.log(req.headers)
+    const auth = req.get("authorization");
+    console.log(auth);
+
+    if (!auth) {
+        throw new UnauthorizedError("invalid auth")
+    }
+
+    const splitAuth = auth.split(" ")
+    console.log("split auth", splitAuth)
+
+    const apiKey = splitAuth[1].trim()
+    return apiKey;
+}
