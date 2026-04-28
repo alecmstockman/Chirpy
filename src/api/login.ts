@@ -8,6 +8,7 @@ import { UnauthorizedError } from "./errors.js";
 
 
 export async function handlerLogin(req: Request, res: Response) {
+    console.log("Handler login");
     const email = req.body.email
     const password = req.body.password;
     const expiresIn = 60 * 60

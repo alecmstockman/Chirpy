@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { respondWithJSON } from "./json.js";
-import { BadRequestError, NotFoundError, UserForbiddenError} from "./errors.js"
+import { BadRequestError, NotFoundError, UnauthorizedError, UserForbiddenError} from "./errors.js"
 import { createChirp, retrieveAllChirps, retrieveChirp, deleteChirp } from "../db/queries/chirp.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js"
@@ -28,12 +28,12 @@ function validateChirp(text: string) {
     return cleaned;
 }
 
-export async function handlerChirp(req: Request, res: Response) {
+type parameters = {
+    body: string;
+    userId: string;
+};
 
-    type parameters = {
-        body: string;
-        userId: string;
-    };
+export async function handlerChirp(req: Request, res: Response) {
 
     const tokenString = getBearerToken(req);
     const secret = config.jwt.secret;
@@ -68,11 +68,28 @@ export async function handlerChirp(req: Request, res: Response) {
 }
 
 export async function handlerRetrieveAllChirps(req: Request, res: Response) {
-    const chirps = await retrieveAllChirps();
-    respondWithJSON(res, 200, chirps);
+    let authorId = "";
+    let authorIdQuery = req.query.authorId;
+    let sortOrder = "";
+    let sortQuery = req.query.sort;
+
+    console.log("sortIdQuery", sortQuery);
+    console.log("sortAuthorQuery", authorIdQuery)
+
+    if (typeof authorIdQuery === "string") {
+        authorId = authorIdQuery;
+    }
+    if (typeof sortQuery === "string") {
+        sortOrder = sortQuery;
+    }
+
+    const chirps = await retrieveAllChirps(authorId, sortOrder);
+    respondWithJSON(res, 200, chirps)
+
 }
 
 export async function handlerRetrieveChirp(req: Request, res: Response) {
+    console.log("\n -------- HANDLER RETRIEVE CHIRP -------")
     const chirpId = req.params.chirpId;
     let chirpUUID = chirpId
 
