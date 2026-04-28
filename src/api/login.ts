@@ -9,9 +9,9 @@ import { UnauthorizedError } from "./errors.js";
 
 export async function handlerLogin(req: Request, res: Response) {
     console.log("Handler login");
-    const email = req.body.email
+    const email = req.body.email;
     const password = req.body.password;
-    const expiresIn = 60 * 60
+    const expiresIn = 60 * 60;
 
     const user = await fetchUser(email);
 
@@ -25,7 +25,7 @@ export async function handlerLogin(req: Request, res: Response) {
         throw new UnauthorizedError("incorrect email or password");
     }
 
-    const token = makeJWT(user.id, expiresIn, config.jwt.secret)
+    const token = makeJWT(user.id, expiresIn, config.jwt.secret);
     const refreshToken = await refreshTokenCreate(user.id);
 
     respondWithJSON(res, 200, {

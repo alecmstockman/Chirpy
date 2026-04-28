@@ -73,9 +73,6 @@ export async function handlerRetrieveAllChirps(req: Request, res: Response) {
     let sortOrder = "";
     let sortQuery = req.query.sort;
 
-    console.log("sortIdQuery", sortQuery);
-    console.log("sortAuthorQuery", authorIdQuery)
-
     if (typeof authorIdQuery === "string") {
         authorId = authorIdQuery;
     }
@@ -89,36 +86,31 @@ export async function handlerRetrieveAllChirps(req: Request, res: Response) {
 }
 
 export async function handlerRetrieveChirp(req: Request, res: Response) {
-    console.log("\n -------- HANDLER RETRIEVE CHIRP -------")
     const chirpId = req.params.chirpId;
-    let chirpUUID = chirpId
+    let chirpUUID = chirpId;
 
     if (typeof chirpId !== "string") {
-        chirpUUID = chirpId[0]
+        chirpUUID = chirpId[0];
     } else {
-        chirpUUID = chirpId
+        chirpUUID = chirpId;
     }
 
     const chirp = await retrieveChirp(chirpUUID);
 
     if (!chirp) {
-        throw new NotFoundError(`Chirp ID: ${chirpUUID} not found`)
+        throw new NotFoundError(`Chirp ID: ${chirpUUID} not found`);
     }
 
-    respondWithJSON(res, 200, chirp)
+    respondWithJSON(res, 200, chirp);
 }
 
 export async function handlerDeleteChirp(req: Request, res: Response) {
-    console.log("\n----------- HANDLER DELETE CHIRP -------------");
     const tokenString = getBearerToken(req);
-    console.log("token: ", tokenString);
     const secret = config.jwt.secret;
     const userId = validateJWT(tokenString, secret);
-    console.log("userId", userId)
     const chirpId = req.params.chirpId;
-    console.log("chirpId", chirpId)
 
-    let chirpUUID = chirpId
+    let chirpUUID = chirpId;
 
     if (typeof chirpId !== "string") {
         chirpUUID = chirpId[0];
@@ -134,13 +126,9 @@ export async function handlerDeleteChirp(req: Request, res: Response) {
 
     const deletedChirp = await deleteChirp(chirpUUID);
 
-    console.log('HANDLER DELETE CHIRP');
-    console.log(deletedChirp)
-
     if (!deletedChirp) {
         throw new NotFoundError("chirp not found");
     }
-
 
     res.status(204).send();
 }

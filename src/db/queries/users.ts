@@ -26,7 +26,6 @@ export async function updateUser(userId: string, email: string, hashedPassword: 
         })
         .where(eq(users.id, userId))
         .returning()
-
     return result;
 }
 
@@ -48,12 +47,10 @@ export async function resetUsers() {
             console.error("cause:", (err as any).cause);
         }
     }
-    console.log("delete successful")
 }
 
 export async function upgradeUser(userId: string) {
     const currentDate = new Date();
-
     const [result] = await db
         .update(users)
         .set({
@@ -62,6 +59,5 @@ export async function upgradeUser(userId: string) {
         })
         .where(eq(users.id, userId))
         .returning()
-
     return result;
 }

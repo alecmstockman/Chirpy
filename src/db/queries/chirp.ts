@@ -9,7 +9,6 @@ export async function createChirp(chirp: NewChirp) {
         .values({ body: chirp.body, userId: chirp.userId })
         .onConflictDoNothing()
         .returning();
-
     return result;
 }
 
@@ -17,9 +16,7 @@ export async function resetChirps() {
     await db.delete(chirps);
 }
 
-export async function retrieveAllChirps(authorId?: string, sort?: string) {
-    console.log("QUERY sort:", sort)
-    
+export async function retrieveAllChirps(authorId?: string, sort?: string) {    
     if (sort === "desc") {
         if (!authorId) {
             const result = await db
@@ -33,7 +30,7 @@ export async function retrieveAllChirps(authorId?: string, sort?: string) {
                 .from(chirps)
                 .where(eq(chirps.userId, authorId))
                 .orderBy(desc(chirps.createdAt))
-            return result
+            return result;
         }
     } else {
         if (!authorId) {
@@ -41,19 +38,16 @@ export async function retrieveAllChirps(authorId?: string, sort?: string) {
                 .select()
                 .from(chirps)
                 .orderBy(asc(chirps.createdAt))
-            return result
+            return result;
         } else {
             const result = await db
                 .select()
                 .from(chirps)
                 .where(eq(chirps.userId, authorId))
                 .orderBy(asc(chirps.createdAt))
-            return result
+            return result;
         }
     }
-
-    
-    
 }
 
 
@@ -63,17 +57,12 @@ export async function retrieveChirp(chirpId: string) {
         .from(chirps)
         .where(eq(chirps.id, chirpId));
     return result
-    
 }
 
 export async function deleteChirp(chirpId: string) {
-    console.log("\n DELETE CHIRP"); 
-    console.log("chirpId", chirpId)
-
     const [result] = await db
         .delete(chirps)
         .where(eq(chirps.id, chirpId))
         .returning();
-
     return result;
 }

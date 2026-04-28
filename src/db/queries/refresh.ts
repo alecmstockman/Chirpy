@@ -31,7 +31,7 @@ export async function refreshTokenCreate(userID: string) {
 }
 
 export async function getUserFromRefreshToken(token: string) {
-    const now = new Date()
+    const now = new Date();
 
     const [result] = await db
         .select({user: users})
@@ -46,7 +46,6 @@ export async function getUserFromRefreshToken(token: string) {
         );
     
     const user = result?.user;
-
     return user;
 }
 

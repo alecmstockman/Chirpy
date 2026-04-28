@@ -14,18 +14,13 @@ export async function handlerUpgradeuser(req: Request, res: Response) {
         }
     };
 
-    console.log("\n---------------- HANDLER UPGRADE USER ------------------")
-
     const apiKey = getAPIKey(req);
-    console.log("apiKey", apiKey);
-    console.log("config", config.polka.apiKey)
     
     if (apiKey !== config.polka.apiKey) {
         throw new UnauthorizedError("invalid username or password");
     }
 
     const webhook: webhooks = req.body;
-    console.log("webhook", webhook)
 
     if (webhook.event !== "user.upgraded") {
         res.status(204).send();
@@ -33,15 +28,10 @@ export async function handlerUpgradeuser(req: Request, res: Response) {
     }
 
     const userId = webhook.data.userId;
-    console.log("userId", userId)
-
     const upgradedUser = await upgradeUser(userId);
-    console.log("upgraded User", upgradeUser)
 
     if (!upgradeUser) {
         throw new NotFoundError("user not found")
     }
-
-    console.log("sending 204")
     respondWithJSON(res, 204, upgradedUser);
 }

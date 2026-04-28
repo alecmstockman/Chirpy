@@ -70,11 +70,11 @@ export function getBearerToken(req: Request): string {
     const auth = req.get("authorization");
 
     if (!auth) {
-        throw new UnauthorizedError("invalid auth")
+        throw new UnauthorizedError("invalid auth");
     }
 
-    const splitAuth = auth.split(" ")
-    const cleanedAuth = splitAuth[1].trim()
+    const splitAuth = auth.split(" ");
+    const cleanedAuth = splitAuth[1].trim();
     return cleanedAuth;
 }
 
@@ -85,18 +85,13 @@ export function makeRefreshToken() {
 }
 
 export function getAPIKey(req: Request) {
-    console.log("----- GET API KEY")
-    console.log(req.headers)
     const auth = req.get("authorization");
-    console.log(auth);
 
     if (!auth) {
-        throw new UnauthorizedError("invalid auth")
+        throw new UnauthorizedError("invalid auth");
     }
 
-    const splitAuth = auth.split(" ")
-    console.log("split auth", splitAuth)
-
-    const apiKey = splitAuth[1].trim()
+    const splitAuth = auth.split(" ");
+    const apiKey = splitAuth[1].trim();
     return apiKey;
 }

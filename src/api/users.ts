@@ -75,7 +75,7 @@ export async function handlerUsersUpdate(req: any, res: any) {
         updatedAt: user.updatedAt,
         token: accessToken,
         isChirpyRed: user.isChirpyRed,
-    }
+    };
 
     respondWithJSON(res, 200, updatedUser);
 }

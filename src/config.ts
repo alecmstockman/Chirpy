@@ -26,7 +26,7 @@ export type JWTConfig = {
 
 export type PolkaConfig = {
     apiKey: string
-}
+};
 
 process.loadEnvFile();
 
@@ -61,7 +61,7 @@ export const config: Config = {
     polka: {
         apiKey: envOrThrow("POLKA_KEY")
     }
-}
+};
 
 
 
